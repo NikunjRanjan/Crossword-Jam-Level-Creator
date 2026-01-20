@@ -98,7 +98,6 @@ button.small {
     padding-right: 6px;
 }
 
-/* ROWS */
 .row {
     display: flex;
     align-items: center;
@@ -112,7 +111,6 @@ button.small {
     opacity: 0.8;
 }
 
-/* LEVEL */
 .level {
     background: #151515;
     border: 1px solid var(--border);
@@ -143,7 +141,6 @@ button.small {
     display: block;
 }
 
-/* WORD */
 .word {
     border: 1px dashed var(--border);
     border-radius: 6px;
@@ -166,12 +163,10 @@ button.small {
 
 <div class="editor">
 
-<!-- LEFT -->
 <div class="left">
 
 <div class="panel">
 <h3>Group Settings</h3>
-
 <div class="row"><label>Group Name</label><input id="name"></div>
 <div class="row"><label>Background Video</label><input id="background_video"></div>
 <div class="row"><label>Icon</label><input id="icon"></div>
@@ -186,17 +181,13 @@ button.small {
 
 </div>
 
-<!-- RIGHT -->
 <div class="right">
 <div class="panel">
 <h3>Export / Import</h3>
-
 <button onclick="exportJSON()">📦 Export JSON</button>
 <button onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
 <button class="danger" onclick="resetAll()">🗑 Reset All</button>
-
 <input type="file" id="importFile" accept=".json" hidden>
-
 <textarea id="output"></textarea>
 </div>
 </div>
@@ -207,101 +198,112 @@ button.small {
 const STORAGE_KEY = "word_level_editor";
 const levelsDiv = document.getElementById("levels");
 
-/* STORAGE */
+/* ---------------- STORAGE ---------------- */
+
 function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
 }
 
 function load() {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!data) return;
-    importFromJSON(data);
+    if (data) importFromJSON(data);
 }
 
-/* LEVEL */
+/* ---------------- LEVEL ---------------- */
+
 function addLevel(saved = null) {
     const level = document.createElement("div");
     level.className = "level open";
 
     level.innerHTML = `
-    <div class="level-header">
-        <span>Level</span>
-        <button class="small danger" onclick="deleteLevel(event,this)">Delete</button>
-    </div>
+        <div class="level-header">
+            <span>Level</span>
+            <button class="small danger">Delete</button>
+        </div>
 
-    <div class="level-body">
-        <div class="row"><label>Grid Width</label><input class="gridW" type="number"></div>
-        <div class="row"><label>Grid Height</label><input class="gridH" type="number"></div>
-        <div class="row"><label>Letters</label><input class="letters"></div>
+        <div class="level-body">
+            <div class="row"><label>Grid Width</label><input class="gridW" type="number"></div>
+            <div class="row"><label>Grid Height</label><input class="gridH" type="number"></div>
+            <div class="row"><label>Letters</label><input class="letters"></div>
 
-        <div class="words"></div>
-        <button onclick="addWord(this)">Add Word</button>
+            <div class="words"></div>
+            <button onclick="addWord(this.closest('.level'))">Add Word</button>
 
-        <div class="row"><label>Bonus Words</label><input class="bonus"></div>
-    </div>
+            <div class="row"><label>Bonus Words</label><input class="bonus"></div>
+        </div>
     `;
 
     levelsDiv.appendChild(level);
 
-    level.querySelector(".level-header").onclick = () => level.classList.toggle("open");
+    level.querySelector(".level-header").onclick = () =>
+        level.classList.toggle("open");
+
+    level.querySelector(".danger").onclick = (e) => {
+        e.stopPropagation();
+        level.remove();
+        reindex();
+        save();
+    };
 
     if (saved) {
         level.querySelector(".gridW").value = saved.grid.width;
         level.querySelector(".gridH").value = saved.grid.height;
         level.querySelector(".letters").value = saved.letters.join(",");
         level.querySelector(".bonus").value = saved.bonus_words.join(",");
-        saved.words.forEach(w => addWord(level.querySelector("button"), w));
+        saved.words.forEach(w => addWord(level, w));
     }
 
     reindex();
     save();
 }
 
-function deleteLevel(e, btn) {
-    e.stopPropagation();
-    btn.closest(".level").remove();
-    reindex();
-    save();
-}
+/* ---------------- WORD ---------------- */
 
-/* WORD */
-function addWord(btn, saved = null) {
-    const div = document.createElement("div");
-    div.className = "word";
+function addWord(levelEl, saved = null) {
+    const wordsContainer = levelEl.querySelector(".words");
 
-    div.innerHTML = `
-    <div class="word-header">
-        <strong>Word</strong>
-        <button class="small danger" onclick="this.closest('.word').remove(); save();">Remove</button>
-    </div>
+    const word = document.createElement("div");
+    word.className = "word";
 
-    <div class="row"><label>Text</label><input class="wordText"></div>
-    <div class="row"><label>Start X</label><input class="x" type="number"></div>
-    <div class="row"><label>Start Y</label><input class="y" type="number"></div>
-    <div class="row">
-        <label>Direction</label>
-        <select class="dir">
-            <option>HORIZONTAL</option>
-            <option>VERTICAL</option>
-        </select>
-    </div>
-    <div class="row"><label>Star Word</label><input type="checkbox" class="star"></div>
+    word.innerHTML = `
+        <div class="word-header">
+            <strong>Word</strong>
+            <button class="small danger">Remove</button>
+        </div>
+
+        <div class="row"><label>Text</label><input class="wordText"></div>
+        <div class="row"><label>Start X</label><input class="x" type="number"></div>
+        <div class="row"><label>Start Y</label><input class="y" type="number"></div>
+        <div class="row">
+            <label>Direction</label>
+            <select class="dir">
+                <option>HORIZONTAL</option>
+                <option>VERTICAL</option>
+            </select>
+        </div>
+        <div class="row"><label>Star Word</label><input type="checkbox" class="star"></div>
     `;
 
-    btn.previousElementSibling.appendChild(div);
+    word.querySelector(".danger").onclick = () => {
+        word.remove();
+        save();
+    };
+
+    wordsContainer.appendChild(word);
 
     if (saved) {
-        div.querySelector(".wordText").value = saved.word;
-        div.querySelector(".x").value = saved.start.x;
-        div.querySelector(".y").value = saved.start.y;
-        div.querySelector(".dir").value = saved.direction;
-        div.querySelector(".star").checked = saved.is_star_word;
+        word.querySelector(".wordText").value = saved.word;
+        word.querySelector(".x").value = saved.start.x;
+        word.querySelector(".y").value = saved.start.y;
+        word.querySelector(".dir").value = saved.direction;
+        word.querySelector(".star").checked = saved.is_star_word;
     }
 
     save();
 }
 
-/* DATA */
+/* ---------------- DATA ---------------- */
+
 function reindex() {
     [...levelsDiv.children].forEach((l, i) => {
         l.querySelector(".level-header span").textContent = `Level ${i}`;
@@ -327,20 +329,21 @@ function collectData() {
 
     return {
         name: name.value,
-        max_level: levels.length,
         background_video: background_video.value,
         icon: icon.value,
         color: color.value,
+        max_level: levels.length,
         levels
     };
 }
+
+/* ---------------- IMPORT / EXPORT ---------------- */
 
 function exportJSON() {
     output.value = JSON.stringify(collectData(), null, 2);
     save();
 }
 
-/* IMPORT */
 document.getElementById("importFile").addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
