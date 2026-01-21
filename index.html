@@ -1,221 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Word Level Editor</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Word Level Editor</title>
 
-<style>
-:root {
-    --bg: #0f0f0f;
-    --panel: #181818;
-    --panel-2: #1f1f1f;
-    --border: #333;
-    --accent: #ffdd00;
-    --danger: #aa3333;
-    --text: #eee;
-}
+    <style>
+      :root {
+        --bg: #0f0f0f;
+        --panel: #181818;
+        --panel-2: #1f1f1f;
+        --border: #333;
+        --accent: #ffdd00;
+        --danger: #aa3333;
+        --text: #eee;
+      }
 
-* { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-html, body {
-    margin: 0;
-    height: 100%;
-}
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
 
-body {
-    font-family: Inter, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+      body {
+        font-family: Inter, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-h2, h3 {
-    color: var(--accent);
-    margin-top: 0;
-}
+      h2,
+      h3 {
+        color: var(--accent);
+        margin-top: 0;
+      }
 
-input, select, textarea, button {
-    background: var(--panel-2);
-    color: #fff;
-    border: 1px solid var(--border);
-    padding: 6px 8px;
-    border-radius: 4px;
-}
+      input,
+      select,
+      textarea,
+      button {
+        background: var(--panel-2);
+        color: #fff;
+        border: 1px solid var(--border);
+        padding: 6px 8px;
+        border-radius: 4px;
+      }
 
-textarea {
-    width: 100%;
-    height: 200px;
-}
+      textarea {
+        width: 100%;
+        height: 200px;
+      }
 
-button {
-    cursor: pointer;
-}
+      button {
+        cursor: pointer;
+      }
 
-button.primary {
-    background: var(--accent);
-    color: #000;
-    font-weight: bold;
-}
+      button.primary {
+        background: var(--accent);
+        color: #000;
+        font-weight: bold;
+      }
 
-button.danger {
-    background: var(--danger);
-}
+      button.danger {
+        background: var(--danger);
+      }
 
-button.small {
-    font-size: 12px;
-    padding: 4px 6px;
-}
+      button.small {
+        font-size: 12px;
+        padding: 4px 6px;
+      }
 
-.editor {
-    display: flex;
-    gap: 16px;
-    flex: 1;
-    overflow: hidden;
-}
+      .editor {
+        display: flex;
+        gap: 16px;
+        flex: 1;
+        overflow: hidden;
+      }
 
-.left, .right {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+      .left,
+      .right {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-.left { flex: 1; }
-.right { width: 380px; }
+      .left {
+        flex: 1;
+      }
+      .right {
+        width: 380px;
+      }
 
-.panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-}
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
 
-.scroll {
-    overflow-y: auto;
-    padding-right: 6px;
-}
+      .scroll {
+        overflow-y: auto;
+        padding-right: 6px;
+      }
 
-.row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-}
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
 
-.row label {
-    width: 120px;
-    font-size: 13px;
-    opacity: 0.8;
-}
+      .row label {
+        width: 120px;
+        font-size: 13px;
+        opacity: 0.8;
+      }
 
-.level {
-    background: #151515;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 12px;
-    overflow: hidden;
-}
+      .level {
+        background: #151515;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
 
-.level-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #202020;
-    padding: 10px 12px;
-    cursor: pointer;
-}
+      .level-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #202020;
+        padding: 10px 12px;
+        cursor: pointer;
+      }
 
-.level-header span {
-    font-weight: bold;
-}
+      .level-header span {
+        font-weight: bold;
+      }
 
-.level-body {
-    padding: 12px;
-    display: none;
-}
+      .level-body {
+        padding: 12px;
+        display: none;
+      }
 
-.level.open .level-body {
-    display: block;
-}
+      .level.open .level-body {
+        display: block;
+      }
 
-.word {
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    padding: 8px;
-    margin-bottom: 8px;
-    background: #141414;
-}
+      .word {
+        border: 1px dashed var(--border);
+        border-radius: 6px;
+        padding: 8px;
+        margin-bottom: 8px;
+        background: #141414;
+      }
 
-.word-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-</style>
-</head>
+      .word-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <h2>Word Game Level Editor</h2>
 
-<h2>Word Game Level Editor</h2>
+    <div class="editor">
+      <div class="left">
+        <div class="panel">
+          <h3>Group Settings</h3>
+          <div class="row"><label>Group Name</label><input id="name" /></div>
+          <div class="row">
+            <label>Background Video</label><input id="background_video" />
+          </div>
+          <div class="row"><label>Icon</label><input id="icon" /></div>
+          <div class="row"><label>Color</label><input id="color" /></div>
+        </div>
 
-<div class="editor">
+        <div class="panel scroll">
+          <h3>Levels</h3>
+          <div id="levels"></div>
+          <button class="primary" onclick="addLevel()">➕ Add Level</button>
+        </div>
+      </div>
 
-<div class="left">
+      <div class="right">
+        <div class="panel">
+          <h3>Export / Import</h3>
+          <button onclick="exportJSON()">📦 Export JSON</button>
+          <button onclick="document.getElementById('importFile').click()">
+            📥 Import JSON
+          </button>
+          <button class="danger" onclick="resetAll()">🗑 Reset All</button>
+          <input type="file" id="importFile" accept=".json" hidden />
+          <textarea id="output"></textarea>
+        </div>
+      </div>
+    </div>
 
-<div class="panel">
-<h3>Group Settings</h3>
-<div class="row"><label>Group Name</label><input id="name"></div>
-<div class="row"><label>Background Video</label><input id="background_video"></div>
-<div class="row"><label>Icon</label><input id="icon"></div>
-<div class="row"><label>Color</label><input id="color"></div>
-</div>
+    <script>
+      const STORAGE_KEY = "word_level_editor";
+      const levelsDiv = document.getElementById("levels");
 
-<div class="panel scroll">
-<h3>Levels</h3>
-<div id="levels"></div>
-<button class="primary" onclick="addLevel()">➕ Add Level</button>
-</div>
+      /* ---------------- STORAGE ---------------- */
 
-</div>
+      function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+      }
 
-<div class="right">
-<div class="panel">
-<h3>Export / Import</h3>
-<button onclick="exportJSON()">📦 Export JSON</button>
-<button onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
-<button class="danger" onclick="resetAll()">🗑 Reset All</button>
-<input type="file" id="importFile" accept=".json" hidden>
-<textarea id="output"></textarea>
-</div>
-</div>
+      function load() {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (data) importFromJSON(data);
+      }
 
-</div>
+      /* ---------------- LEVEL ---------------- */
 
-<script>
-const STORAGE_KEY = "word_level_editor";
-const levelsDiv = document.getElementById("levels");
+      function addLevel(saved = null) {
+        const level = document.createElement("div");
+        level.className = "level open";
 
-/* ---------------- STORAGE ---------------- */
-
-function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
-}
-
-function load() {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (data) importFromJSON(data);
-}
-
-/* ---------------- LEVEL ---------------- */
-
-function addLevel(saved = null) {
-    const level = document.createElement("div");
-    level.className = "level open";
-
-    level.innerHTML = `
+        level.innerHTML = `
         <div class="level-header">
             <span>Level</span>
             <button class="small danger">Delete</button>
@@ -233,153 +244,219 @@ function addLevel(saved = null) {
         </div>
     `;
 
-    levelsDiv.appendChild(level);
+        levelsDiv.appendChild(level);
 
-    level.querySelector(".level-header").onclick = () =>
-        level.classList.toggle("open");
+        level.querySelector(".level-header").onclick = () =>
+          level.classList.toggle("open");
 
-    level.querySelector(".danger").onclick = (e) => {
-        e.stopPropagation();
-        level.remove();
+        level.querySelector(".danger").onclick = (e) => {
+          e.stopPropagation();
+          level.remove();
+          reindex();
+          save();
+        };
+
+        if (saved) {
+          level.querySelector(".gridW").value = saved.grid.width;
+          level.querySelector(".gridH").value = saved.grid.height;
+          level.querySelector(".letters").value = saved.letters.join(",");
+          level.querySelector(".bonus").value = saved.bonus_words.join(",");
+          saved.words.forEach((w) => addWord(level, w));
+        }
+
         reindex();
         save();
-    };
+      }
 
-    if (saved) {
-        level.querySelector(".gridW").value = saved.grid.width;
-        level.querySelector(".gridH").value = saved.grid.height;
-        level.querySelector(".letters").value = saved.letters.join(",");
-        level.querySelector(".bonus").value = saved.bonus_words.join(",");
-        saved.words.forEach(w => addWord(level, w));
-    }
+      /* ---------------- WORD ---------------- */
+      function addLevel(saved = null) {
+        const level = document.createElement("div");
+        level.className = "level open";
 
-    reindex();
-    save();
-}
+        level.innerHTML = `
+    <div class="level-header">
+      <span>Level</span>
+      <button class="small danger">Delete</button>
+    </div>
 
-/* ---------------- WORD ---------------- */
+    <div class="level-body">
+      <div class="row"><label>Grid Width</label><input class="gridW" type="number"></div>
+      <div class="row"><label>Grid Height</label><input class="gridH" type="number"></div>
+      <div class="row"><label>Letters</label><input class="letters"></div>
 
-function addWord(levelEl, saved = null) {
-    const wordsContainer = levelEl.querySelector(".words");
+      <div class="words"></div>
+      <button onclick="addWord(this.closest('.level'))">Add Word</button>
 
-    const word = document.createElement("div");
-    word.className = "word";
+      <div class="row"><label>Bonus Words</label><input class="bonus"></div>
+    </div>
+  `;
 
-    word.innerHTML = `
-        <div class="word-header">
-            <strong>Word</strong>
-            <button class="small danger">Remove</button>
-        </div>
+        levelsDiv.appendChild(level);
 
-        <div class="row"><label>Text</label><input class="wordText"></div>
-        <div class="row"><label>Start X</label><input class="x" type="number"></div>
-        <div class="row"><label>Start Y</label><input class="y" type="number"></div>
-        <div class="row">
-            <label>Direction</label>
-            <select class="dir">
-                <option>HORIZONTAL</option>
-                <option>VERTICAL</option>
-            </select>
-        </div>
-        <div class="row"><label>Star Word</label><input type="checkbox" class="star"></div>
-    `;
+        level.querySelector(".level-header").onclick = () =>
+          level.classList.toggle("open");
 
-    word.querySelector(".danger").onclick = () => {
-        word.remove();
-        save();
-    };
+        level.querySelector(".danger").onclick = (e) => {
+          e.stopPropagation();
+          level.remove();
+          reindex();
+          save();
+        };
 
-    wordsContainer.appendChild(word);
+        const lettersInput = level.querySelector(".letters");
+        enableAutoComma(lettersInput);
 
-    if (saved) {
-        word.querySelector(".wordText").value = saved.word;
-        word.querySelector(".x").value = saved.start.x;
-        word.querySelector(".y").value = saved.start.y;
-        word.querySelector(".dir").value = saved.direction;
-        word.querySelector(".star").checked = saved.is_star_word;
-    }
-
-    save();
-}
-
-/* ---------------- DATA ---------------- */
-
-function reindex() {
-    [...levelsDiv.children].forEach((l, i) => {
-        l.querySelector(".level-header span").textContent = `Level ${i}`;
-    });
-}
-
-function collectData() {
-    const levels = [...levelsDiv.children].map((l, i) => ({
-        level_index: i,
-        grid: {
-            width: +l.querySelector(".gridW").value,
-            height: +l.querySelector(".gridH").value
-        },
-        letters: l.querySelector(".letters").value.split(",").map(v => v.trim()).filter(Boolean),
-        words: [...l.querySelectorAll(".word")].map(w => ({
-            word: w.querySelector(".wordText").value,
-            start: { x: +w.querySelector(".x").value, y: +w.querySelector(".y").value },
-            direction: w.querySelector(".dir").value,
-            is_star_word: w.querySelector(".star").checked
-        })),
-        bonus_words: l.querySelector(".bonus").value.split(",").map(v => v.trim()).filter(Boolean)
-    }));
-
-    return {
-        name: name.value,
-        background_video: background_video.value,
-        icon: icon.value,
-        color: color.value,
-        max_level: levels.length,
-        levels
-    };
-}
-
-/* ---------------- IMPORT / EXPORT ---------------- */
-
-function exportJSON() {
-    output.value = JSON.stringify(collectData(), null, 2);
-    save();
-}
-
-document.getElementById("importFile").addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        try {
-            importFromJSON(JSON.parse(reader.result));
-        } catch {
-            alert("Invalid JSON");
+        if (saved) {
+          level.querySelector(".gridW").value = saved.grid.width;
+          level.querySelector(".gridH").value = saved.grid.height;
+          lettersInput.value = saved.letters.join(",");
+          level.querySelector(".bonus").value = saved.bonus_words.join(",");
+          saved.words.forEach((w) => addWord(level, w));
         }
-    };
-    reader.readAsText(file);
-});
 
-function importFromJSON(data) {
-    levelsDiv.innerHTML = "";
+        reindex();
+        save();
+      }
 
-    name.value = data.name || "";
-    background_video.value = data.background_video || "";
-    icon.value = data.icon || "";
-    color.value = data.color || "";
+      /* ---------------- DATA ---------------- */
 
-    data.levels.forEach(l => addLevel(l));
-    save();
-}
+      function reindex() {
+        [...levelsDiv.children].forEach((l, i) => {
+          l.querySelector(".level-header span").textContent = `Level ${i}`;
+        });
+      }
 
-function resetAll() {
-    if (!confirm("Delete everything?")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
-}
+      function collectData() {
+        const levels = [...levelsDiv.children].map((l, i) => ({
+          level_index: i,
+          grid: {
+            width: +l.querySelector(".gridW").value,
+            height: +l.querySelector(".gridH").value,
+          },
+          letters: l
+            .querySelector(".letters")
+            .value.split(",")
+            .map((v) => v.trim())
+            .filter(Boolean),
+          words: [...l.querySelectorAll(".word")].map((w) => ({
+            word: w.querySelector(".wordText").value,
+            start: {
+              x: +w.querySelector(".x").value,
+              y: +w.querySelector(".y").value,
+            },
+            direction: w.querySelector(".dir").value,
+            is_star_word: w.querySelector(".star").checked,
+          })),
+          bonus_words: l
+            .querySelector(".bonus")
+            .value.split(",")
+            .map((v) => v.trim())
+            .filter(Boolean),
+        }));
 
-document.addEventListener("input", save);
-load();
-</script>
+        return {
+          name: icon.value,
+          background_video: background_video.value,
+          icon: icon.value,
+          color: color.value,
+          max_level: levels.length,
+          levels,
+        };
+      }
 
-</body>
+      function enableAutoComma(input) {
+        input.addEventListener("input", () => {
+          const letters = input.value
+            .replace(/[^a-zA-Z]/g, "")
+            .toUpperCase()
+            .split("");
+
+          input.value = letters.join(",");
+        });
+      }
+
+      /* ---------------- IMPORT / EXPORT ---------------- */
+
+      function exportJSON() {
+        const json = JSON.stringify(collectData(), null, 2);
+        output.value = json;
+
+        navigator.clipboard
+          .writeText(json)
+          .then(() => {
+            showPopup("JSON copied to clipboard");
+          })
+          .catch((err) => {
+            console.error("Clipboard copy failed", err);
+            alert("Copy to clipboard failed. Please copy manually.");
+          });
+
+        save();
+      }
+
+      function showPopup(message) {
+        const popup = document.createElement("div");
+        popup.textContent = message;
+
+        Object.assign(popup.style, {
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          background: "#333",
+          color: "#fff",
+          padding: "10px 16px",
+          borderRadius: "6px",
+          fontSize: "14px",
+          zIndex: 9999,
+          opacity: "0",
+          transition: "opacity 0.3s ease",
+        });
+
+        document.body.appendChild(popup);
+
+        requestAnimationFrame(() => (popup.style.opacity = "1"));
+
+        setTimeout(() => {
+          popup.style.opacity = "0";
+          setTimeout(() => popup.remove(), 300);
+        }, 2000);
+      }
+
+      document.getElementById("importFile").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            importFromJSON(JSON.parse(reader.result));
+          } catch {
+            alert("Invalid JSON");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      function importFromJSON(data) {
+        levelsDiv.innerHTML = "";
+
+        name.value = data.name || "";
+        background_video.value = data.background_video || "";
+        icon.value = data.icon || "";
+        color.value = data.color || "";
+
+        data.levels.forEach((l) => addLevel(l));
+        save();
+      }
+
+      function resetAll() {
+        if (!confirm("Delete everything?")) return;
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+
+      document.addEventListener("input", save);
+      load();
+    </script>
+  </body>
 </html>
