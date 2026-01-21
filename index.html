@@ -152,6 +152,23 @@
       .level.open .level-body {
         display: block;
       }
+      .floating-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+
+        background: var(--accent);
+        color: #000;
+        font-weight: bold;
+
+        border: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+        cursor: pointer;
+      }
 
       .word {
         border: 1px dashed var(--border);
@@ -168,6 +185,13 @@
       }
     </style>
   </head>
+  <button
+    id="collapseAllBtn"
+    class="floating-btn"
+    onclick="toggleAllLevels(false)"
+  >
+    ⬇ Collapse All
+  </button>
 
   <body>
     <h2>Word Game Level Editor</h2>
@@ -319,6 +343,19 @@
         [...levelsDiv.children].forEach((l, i) => {
           l.querySelector(".level-header span").textContent = `Level ${i}`;
         });
+      }
+      let allCollapsed = false;
+
+      function toggleAllLevels(forceOpen) {
+        const levels = [...levelsDiv.children];
+        const btn = document.getElementById("collapseAllBtn");
+
+        levels.forEach((level) => {
+          level.classList.toggle("open", forceOpen);
+        });
+
+        btn.textContent = forceOpen ? "⬇ Collapse All" : "⬆ Expand All";
+        btn.onclick = () => toggleAllLevels(!forceOpen);
       }
 
       function collectData() {
